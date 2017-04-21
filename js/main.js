@@ -27,7 +27,7 @@ function calculate() {
 
   // Compute monthly payments
   var x = Math.pow(1 + interest, payments);
-  var monthly = (principa * x * interest) / (x - 1);
+  var monthly = (principal * x * interest) / (x - 1);
 
   // Check validity and display data
   if (isFinite(monthly)) {
@@ -132,7 +132,33 @@ window.onload = function() {
     var req = new XMLHttpRequest(); // Start new request
     req.open("GET", url);           // GET req for the url
     req.send(null);                 // Send req with no body
-    
 
+    // Register event handler (incoming server side response)
+    req.onreadystatechange = function() {
+
+      // Check if HTTP response is complete
+      if (req.readyState == 4 && req.status == 200) {
+
+        // Fetch data from response
+        var response = req.responseText;
+
+        // Cast text to JSON
+        var lender = JSON.parse(response);
+
+        // Create a list of lenders
+        var list = "";
+        for (var i = 0; i < lender.length; i++) {
+
+          list += "<li><a href='" + lender[i].url + "'>" +
+                  lender[i].name + "</a></li>";
+
+        }
+
+        // Display list
+        ad.innerHTML = "<ul>" + list + "</ul>";
+
+      }
+
+    }
 
  }
