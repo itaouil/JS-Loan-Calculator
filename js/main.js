@@ -87,3 +87,52 @@ function save(amount, apr, years, zipcode) {
   }
 
 }
+
+/**
+ * Automatically tries to restore
+ * fields when DOM is loaded.
+ */
+window.onload = function() {
+
+  // Checks for browser support and data
+  if (window.localStorage && localStorage.loan_amount) {
+
+    document.getElementById("amount").value  = localStorage.loan_amount;
+    document.getElementById("apr").value     = localStorage.loan_apr;
+    document.getElementById("years").value   = localStorage.loan_years;
+    document.getElementById("zipcode").value = localStorage.loan_zipcode;
+
+  }
+
+};
+
+/**
+ * Server side lenders search
+ * missing. However, the function
+ * once the hypotetical server returns
+ * the list of lenders displays them.
+ */
+ function getLenders(amount, apr, years, zipcode) {
+
+   // Check XMLHttpRequest browser comp.
+   if (!window.XMLHttpRequest) return;
+
+   // Find element to display lenders
+   var ad = document.getElementById("lenders");
+   if (!ad) return;
+
+   // Encode user's input as url query
+   var url = "getLenders.php"                       +
+             "?amt=" + encodeURIComponent(amount)   +
+             "&apr=" + encodeURIComponent(apr)      +
+             "&yrs=" + encodeURIComponent(years)    +
+             "&zip=" + encodeURIComponent(zipcode);
+
+    // Create XMLHttpRequest
+    var req = new XMLHttpRequest(); // Start new request
+    req.open("GET", url);           // GET req for the url
+    req.send(null);                 // Send req with no body
+    
+
+
+ }
