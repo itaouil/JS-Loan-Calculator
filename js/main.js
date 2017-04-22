@@ -213,4 +213,25 @@ function chart(principal, interest, monthly, payments) {
   g.fillStyle = "black";
   g.gillText("Loan Balance", 20, 50);
 
+  // Yearly tick marks and years on X axis
+  g.textAlign = "center";
+  for (var year = 1; year * 12 < payments; year++) {
+    var x = paymentToX(year * 12); // Compute tick postion
+    g.fillRect(x - 0.5, y - 3, 1, 3); // Draw the tick
+    if (year == 1) g.fillText("Year", x, y - 5); // Label the axis
+    if (year % 5 == 0 && year * 12 !== payments) // Number every 5 years
+      g.fillText(String(year), x, y - 5);
+  }
+
+  // Mark payment amounts along right edge
+  g.textAlign = "right";
+  g.textBaseline = "middle";
+  var ticks = [monthly * payments, principal];
+  var rightEdge = paymentToX(payments);
+  for (var i = 0; i < ticks.length; i++) {
+    var y = amountToY(ticks[i]);
+    g.fillRect(rightEdge - 3, y - 0.5, 3, 2);
+    g.fillText(String(ticks[i].toFixed(0)), rightEdge - 5, y);
+  }
+
 }
