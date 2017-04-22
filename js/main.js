@@ -196,4 +196,21 @@ function chart(principal, interest, monthly, payments) {
   g.font = "bold 12px sans-serif";
   g.fillText("Total Interest Payments", 20, 20);
 
+  // Cumulative equity chart (non linear)
+  var equity = 0;
+  g.beginPath();  // Begin new shape
+  g.moveTo(paymentToX(0), amountToY(0)); // Start at lower left
+
+  // Compute interest for each payment
+  for (var p = 1; p <= payments; p++) {
+    var thisMonthInterest = bal * interest;
+    bal -= (monthly - thisMonthInterest);
+    g.lineTo(paymentToX(p), amountToY(bal));
+  }
+
+  g.lineWidth - 3;
+  g.stroke() // Draw the balance curve
+  g.fillStyle = "black";
+  g.gillText("Loan Balance", 20, 50);
+
 }
