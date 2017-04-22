@@ -112,53 +112,88 @@ window.onload = function() {
  * once the hypotetical server returns
  * the list of lenders displays them.
  */
- function getLenders(amount, apr, years, zipcode) {
+function getLenders(amount, apr, years, zipcode) {
 
-   // Check XMLHttpRequest browser comp.
-   if (!window.XMLHttpRequest) return;
+  // Check XMLHttpRequest browser comp.
+  if (!window.XMLHttpRequest) return;
 
-   // Find element to display lenders
-   var ad = document.getElementById("lenders");
-   if (!ad) return;
+  // Find element to display lenders
+  var ad = document.getElementById("lenders");
+  if (!ad) return;
 
-   // Encode user's input as url query
-   var url = "getLenders.php"                       +
-             "?amt=" + encodeURIComponent(amount)   +
-             "&apr=" + encodeURIComponent(apr)      +
-             "&yrs=" + encodeURIComponent(years)    +
-             "&zip=" + encodeURIComponent(zipcode);
+  // Encode user's input as url query
+  var url = "getLenders.php"                       +
+            "?amt=" + encodeURIComponent(amount)   +            "&apr=" + encodeURIComponent(apr)      +
+            "&yrs=" + encodeURIComponent(years)    +
+            "&zip=" + encodeURIComponent(zipcode);
 
-    // Create XMLHttpRequest
-    var req = new XMLHttpRequest(); // Start new request
-    req.open("GET", url);           // GET req for the url
-    req.send(null);                 // Send req with no body
+  // Create XMLHttpRequest
+  var req = new XMLHttpRequest(); // Start new request
+  req.open("GET", url);           // GET req for the url
+  req.send(null);                 // Send req with no body
 
-    // Register event handler (incoming server side response)
-    req.onreadystatechange = function() {
+  // Register event handler (incoming server side response)
+  req.onreadystatechange = function() {
 
-      // Check if HTTP response is complete
-      if (req.readyState == 4 && req.status == 200) {
+    // Check if HTTP response is complete
+    if (req.readyState == 4 && req.status == 200) {
 
-        // Fetch data from response
-        var response = req.responseText;
+      // Fetch data from response
+      var response = req.responseText;
 
-        // Cast text to JSON
-        var lender = JSON.parse(response);
+      // Cast text to JSON
+      var lender = JSON.parse(response);
 
-        // Create a list of lenders
-        var list = "";
-        for (var i = 0; i < lender.length; i++) {
+      // Create a list of lenders
+      var list = "";
+      for (var i = 0; i < lender.length; i++) {
 
-          list += "<li><a href='" + lender[i].url + "'>" +
-                  lender[i].name + "</a></li>";
-
-        }
-
-        // Display list
-        ad.innerHTML = "<ul>" + list + "</ul>";
+        list += "<li><a href='" + lender[i].url + "'>" +
+                lender[i].name + "</a></li>";
 
       }
 
-    }
+      // Display list
+      ad.innerHTML = "<ul>" + list + "</ul>";
 
- }
+    }
+  }
+
+}
+
+/**
+ * Draws loan data into the canvas.
+ */
+
+function chart(principal, interest, monthly, payments) {
+
+  // Get graph element
+  var graph = document.getElementById("graph");
+
+  // Some sort of magic that clears the canvas element
+  graph.width = graph.width;
+
+  // Check browser capability or chart cleaning
+  if (arguments.length == 0 || !graph.getContext) return;
+
+  // Get context (drawing object) and canvas size
+  var g = graph.getContext("2d");
+  var width = graph.width, var height = graph.height;
+
+  // Convert some inputs to pixels
+  function paymentToX(n) { return n * width/payments }
+  function amountToY(n) { return height - (a * height / (monthly * payments * 1.05)) }
+
+  // Draw payments in the graph
+  g.moveTo(payments(0), amountToY(0)); // Start lower left
+  g.lineTo(paymentToX(payments), amountToY(monthly * payments)); // Draw to upper light
+  g.lineTo(paymentToX(payments), amountToY(0)); // Down to lower right
+  g.closePath(); // Back to starting point (0,0)
+
+  // Style payment graph
+  g.fillStyle = "#f88";
+  g.fill();
+  g.font = "bold 12px sans-serif";
+  g.fillText("Total Interest Payments", 20, 20);
+
+}
